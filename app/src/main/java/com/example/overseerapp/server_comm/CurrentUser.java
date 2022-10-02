@@ -13,14 +13,16 @@ public class CurrentUser {
 	public static String email = "";
 	public static String name = "";
 	public static String password = "";
+	public static String trackedUserIDs = "";
 
 	//do not call constructor, use static methods
 	private CurrentUser() { }
 
-	public static void setCurrentUser(final @NonNull String Email, final @NonNull String Name, final @NonNull String password) {
+	public static void setCurrentUser(final @NonNull String Email, final @NonNull String Name, final @NonNull String password, final @NonNull String trackedUserIDs) {
 		CurrentUser.email = Email;
 		CurrentUser.name = Name;
 		CurrentUser.password = password;
+		CurrentUser.trackedUserIDs = trackedUserIDs;
 	}
 
 	public static void reset() {
@@ -30,7 +32,7 @@ public class CurrentUser {
 	}
 
 	public static String toText() {
-		return email + OverseerApp.USER_SEPARATOR + name + OverseerApp.USER_SEPARATOR + password;
+		return email + OverseerApp.USER_SEPARATOR + name + OverseerApp.USER_SEPARATOR + password + OverseerApp.USER_SEPARATOR + trackedUserIDs;
 	}
 
 	public static void fromText(final @NonNull String userString) throws IllegalArgumentException {
@@ -40,11 +42,11 @@ public class CurrentUser {
 			name = parameterUser[1];
 			password = parameterUser[2];
 		}
-		else if (parameterUser.length == 3) {
+		else if (parameterUser.length == 4) {
 			email = parameterUser[0];
 			name = parameterUser[1];
 			password = parameterUser[2];
-			//TODO: get the tracked users here as well
+			trackedUserIDs = parameterUser[3];
 		} else {
 			throw new IllegalArgumentException("userString was not properly formatted");
 		}

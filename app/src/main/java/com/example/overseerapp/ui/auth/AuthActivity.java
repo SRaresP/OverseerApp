@@ -1,6 +1,7 @@
 package com.example.overseerapp.ui.auth;
 
 import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
@@ -16,7 +17,7 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
-import com.example.overseerapp.ui.DebugActivity;
+import com.example.overseerapp.ui.PrimaryActivity;
 import com.example.overseerapp.ui.custom.LoadingView;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -53,6 +54,8 @@ public class AuthActivity extends AppCompatActivity {
 			try {
 				Socket socket = ServerHandler.login();
 				String response = ServerHandler.receive(socket);
+				//now I know why
+				//TODO: redo all of these to use .equals()
 				//THIS IF ONLY WORKS IF I USE "CONTAINS" INSTEAD OF "EQUALS"
 				//AND I HAVE NO IDEA WHY GOD HELP US ALL
 				if (response.contains(ServerHandler.LOGGED_IN)) {
@@ -64,9 +67,14 @@ public class AuthActivity extends AppCompatActivity {
 							setUpForManualLogin(alertDialog, "Could not save user data to disk, you will have to log in again next time");
 						});
 					}
+					//get the user part of the response as an array which contains the name and the tracked user id's in order
+					String[] userDetails = response.split(String.valueOf(OverseerApp.COMM_SEPARATOR))[1].split(String.valueOf(OverseerApp.USER_SEPARATOR));
+					//set those user details
+					CurrentUser.name = userDetails[0];
+					CurrentUser.trackedUserIDs = userDetails[1];
 					overseerApp.getMainThreadHandler().post(() -> {
 						//alertDialog.dismiss();
-						Intent intent = new Intent(this, DebugActivity.class);
+						Intent intent = new Intent(this, PrimaryActivity.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 						startActivity(intent);
 						finish();
@@ -96,6 +104,8 @@ public class AuthActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_auth);
 
+		boolean isPresent = Geocoder.isPresent();
+
 		OverseerApp overseerApp = OverseerApp.getInstance();
 
 		RelativeLayout innerRelLayout = findViewById(R.id.logInnerRelLayout);
@@ -114,7 +124,7 @@ public class AuthActivity extends AppCompatActivity {
 		loginB.setOnClickListener(view -> {
 			String email = emailTIET.getText().toString();
 			String password = passwordTIET.getText().toString();
-			CurrentUser.setCurrentUser(email, "", password);
+			CurrentUser.setCurrentUser(email, "", password, "");
 
 			//LoadingView loadingView = new LoadingView(innerRelLayout, this, "Logging in", null, new AppCompatButton[] {loginB, registerB}, false).show();
 			AlertDialog alertDialogClassicLogin = new AlertDialog.Builder(this)
@@ -136,7 +146,7 @@ public class AuthActivity extends AppCompatActivity {
 		} catch (IOException e) {
 			//only setCurrentUserFromDisk can make the thread reach this path by throwing an exception
 			Log.i(TAG, e.getMessage() + "; user is not logged in", e);
-			setUpForManualLogin(null, null);
+			setUpForManualLogin(alertDialogAutoLogin, null);
 		}
 	}
 }

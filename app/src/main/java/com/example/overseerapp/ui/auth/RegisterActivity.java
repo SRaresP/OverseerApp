@@ -13,7 +13,7 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
-import com.example.overseerapp.ui.DebugActivity;
+import com.example.overseerapp.ui.PrimaryActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
 			}
 			String name = nameTIET.getText().toString();
 			String password = passwordTIET.getText().toString();
-			CurrentUser.setCurrentUser(email, name, password);
+			CurrentUser.setCurrentUser(email, name, password, "");
 
 			Toast.makeText(this, "Connecting to server", Toast.LENGTH_SHORT).show();
 			overseerApp.getExecutorService().execute(() -> {
@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity {
 					overseerApp.getMainThreadHandler().post(() -> {
 						//TODO: change this to use .equals() in both apps
 						if (response.contains(ServerHandler.REGISTERED)) {
-							Intent intent = new Intent(this, DebugActivity.class);
+							Intent intent = new Intent(this, PrimaryActivity.class);
 							intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 							startActivity(intent);
 							finish();

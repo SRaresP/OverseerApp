@@ -21,6 +21,10 @@ public class OverseerApp extends Application {
 	public static final char DATE_LAT_LONG_SEPARATOR = '²';
 	// \/ used to separate locations in a location history string \/
 	public static final char LOC_HISTORY_SEPARATOR = 'ⁿ';
+	// \/ used to separate a tracked user's id and name \/
+	public static final char ID_NAME_SEPARATOR = '·';
+	// \/ used to separate tracked users in a tracked user string \/
+	public static final char TRACKED_USER_SEPARATOR = '°';
 	// \/ used to separate user info like email, name, password etc \/
 	public static final char USER_SEPARATOR = '√';
 
