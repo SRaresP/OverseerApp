@@ -1,62 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- The ID's in this file should always start with
+"track" to denote the fragment -->
+
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.TrackingListFragment">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/trackTrackingListL"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/trackAddNewB"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="@string/add_new_user_to_tracking_list" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/trackTrackingListL"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/nameTV"
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rares#1234"
-                android:textColor="#000"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"/>
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/addressTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mures Reghin livezilor"
-                android:textColor="#000"
-                app:layout_constraintTop_toBottomOf="@id/nameTV"
-                app:layout_constraintLeft_toLeftOf="parent"
-                />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/updatedTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Updated 10 minutes ago"
-                android:textColor="#000"
-                app:layout_constraintTop_toBottomOf="@id/addressTV"
-                app:layout_constraintLeft_toLeftOf="parent"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/nameTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rares#1234"
+                        android:textColor="#000" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/settingsB"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_settings_24"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/addressTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mures Reghin livezilor planeta pamant universul nostru calea lactee unde tren sa mai zic ca sunt ca nu mai stiu holy shtieeeieieieieieieieie"
+                        android:textColor="#000" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/updatedTV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Updated 10 minutes ago"
+                        android:textColor="#000" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/settingsB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:src="@drawable/ic_baseline_settings_24" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

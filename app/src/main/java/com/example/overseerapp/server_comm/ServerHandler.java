@@ -18,14 +18,16 @@ public class ServerHandler {
 	private static final String LOGIN_OVERSEER = "LOGIN_OVERSEER";
 	private static final String REGISTER_OVERSEER = "REGISTER_OVERSEER";
 	private static final String EDIT_OVERSEER = "EDIT_OVERSEER";
-	private static final String GET_LOCATION_HISTORY = "GET_LOCATION_HISTORY";
+	private static final String ADD_TARGET = "ADD_TARGET";
+	private static final String GET_USER = "GET_USER";
 
 	//replies from server
 	//positive
 	public static final String LOGGED_IN = "LOGGED_IN";
 	public static final String REGISTERED = "REGISTERED";
 	public static final String EDITED = "EDITED";
-	public static final String GOT_LOCATION_HISTORY = "GOT_LOCATION_HISTORY";
+	public static final String GOT_USER = "GOT_USER";
+	public static final String ADDED_TARGET = "ADDED_TARGET";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -62,14 +64,16 @@ public class ServerHandler {
 		return socket;
 	}
 
-	public static Socket getLocationHistory(String trackedUserId) throws IOException {
+	public static Socket getUser(String trackedUserId) throws IOException {
 		Socket socket = new Socket(IP, PORT);
 		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
 
 		StringBuilder stringBuilder = new StringBuilder()
-				.append(GET_LOCATION_HISTORY)
+				.append(GET_USER)
 				.append(OverseerApp.COMM_SEPARATOR)
 				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
@@ -77,6 +81,26 @@ public class ServerHandler {
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
+	}
+
+	public static Socket addTarget(String code) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(ADD_TARGET)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(code);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+
 	}
 
 	public static String receive(final @NonNull Socket socket) throws IOException {

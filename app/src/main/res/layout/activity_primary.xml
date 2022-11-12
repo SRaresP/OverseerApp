@@ -42,5 +42,8 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/primaryWorkLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/primaryNavView"
+        >
+    </androidx.appcompat.widget.LinearLayoutCompat>
 </RelativeLayout>

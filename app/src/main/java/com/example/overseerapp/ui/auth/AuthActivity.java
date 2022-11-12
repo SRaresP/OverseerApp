@@ -17,6 +17,7 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
+import com.example.overseerapp.tracking.TrackedUsersHandler;
 import com.example.overseerapp.ui.PrimaryActivity;
 import com.example.overseerapp.ui.custom.LoadingView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -53,7 +54,7 @@ public class AuthActivity extends AppCompatActivity {
 		overseerApp.getExecutorService().execute(() -> {
 			try {
 				Socket socket = ServerHandler.login();
-				String response = ServerHandler.receive(socket);
+				String response = ServerHandler.receive(socket).trim();
 				//now I know why
 				//TODO: redo all of these to use .equals()
 				//THIS IF ONLY WORKS IF I USE "CONTAINS" INSTEAD OF "EQUALS"
@@ -72,12 +73,13 @@ public class AuthActivity extends AppCompatActivity {
 					//set those user details
 					CurrentUser.name = userDetails[0];
 					CurrentUser.trackedUserIDs = userDetails[1];
+					TrackedUsersHandler.addTrackedUsersFromIds();
 					overseerApp.getMainThreadHandler().post(() -> {
-						//alertDialog.dismiss();
 						Intent intent = new Intent(this, PrimaryActivity.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 						startActivity(intent);
 						finish();
+						alertDialog.dismiss();
 					});
 				} else {
 					overseerApp.getMainThreadHandler().post(() -> {

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
@@ -28,5 +29,10 @@ public class PrimaryActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_primary);
+
+		TrackingListFragment trackingListFragment = new TrackingListFragment();
+		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		fragmentTransaction.replace(R.id.primaryWorkLayout, trackingListFragment);
+		fragmentTransaction.commit();
 	}
 }
