@@ -1,26 +1,29 @@
 package com.example.overseerapp.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
+import androidx.fragment.app.Fragment;
 
+import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.R;
-import com.google.android.material.button.MaterialButton;
+import com.example.overseerapp.server_comm.CurrentUser;
+import com.example.overseerapp.server_comm.ServerHandler;
+
+import java.net.Socket;
 
 public class UserEntryLayout extends LinearLayoutCompat {
+	private static String TAG = "UserEntryLayout";
 
 	//mandatory constructors for Android to use for whatever it needs
 	public UserEntryLayout(@NonNull Context context) {
@@ -36,7 +39,7 @@ public class UserEntryLayout extends LinearLayoutCompat {
 	}
 
 	//constructor that is actually used in app code
-	public UserEntryLayout(@NonNull Context context, @NonNull String userName, @NonNull int userId, @NonNull String location, @NonNull String dateRecordedLocation) {
+	public UserEntryLayout(@NonNull Context context, Fragment fragmentToRefresh, @NonNull String userName, int userId, @NonNull String location, @NonNull String dateRecordedLocation) {
 		super(context);
 
 		setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -77,8 +80,65 @@ public class UserEntryLayout extends LinearLayoutCompat {
 		settingsB.setImageResource(R.drawable.ic_baseline_settings_24);
 		settingsB.setPadding(15, 15, 15, 15);
 
+		//create delete button
+		AppCompatImageButton deleteB = new AppCompatImageButton(context);
+		deleteB.setId(ViewCompat.generateViewId());
+		deleteB.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		deleteB.setImageResource(R.drawable.ic_baseline_delete_24);
+		deleteB.setPadding(15, 15, 15, 15);
+		deleteB.setOnClickListener((view) -> {
+			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			builder.setTitle(R.string.are_you_sure_you_want_to_stop_tracking_this_user)
+					.setCancelable(true)
+					.setNegativeButton(R.string.No_keep_following_them, (DialogInterface dialogInterface, int i) -> {
+					})
+					.setPositiveButton(R.string.yes, (DialogInterface dialogInterface, int i) -> {
+						OverseerApp overseerApp = OverseerApp.getInstance();
+						overseerApp.getExecutorService().execute(() -> {
+							try {
+								Socket socket = ServerHandler.removeTarget(userId);
+								String[] response = ServerHandler.receive(socket).split(String.valueOf(OverseerApp.COMM_SEPARATOR));
+
+								if (response[0].trim().equals(ServerHandler.REMOVED_TARGET)) {
+									CurrentUser.removeTrackedUserId(userId);
+									// Call onResume to refresh list of tracked users
+									if (fragmentToRefresh != null) {
+										overseerApp.getMainThreadHandler().post(fragmentToRefresh::onResume);
+									}
+								}
+								else {
+									overseerApp.getMainThreadHandler().post(() -> {
+										AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+										builder1.setTitle("Removing the user went wrong.")
+												.setNeutralButton(R.string.ok, (dialogInterface1, i1) -> {})
+												.show();
+									});
+								}
+							} catch (Exception e) {
+								overseerApp.getMainThreadHandler().post(() -> {
+									AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+									builder1.setTitle("Removing the user went wrong.")
+											.setNeutralButton(R.string.ok, (dialogInterface1, i1) -> {})
+											.show();
+								});
+								Log.e(TAG, e.getMessage());
+							}
+						});
+					})
+					.show();
+		});
+
+		//create the buttons wrapper
+		LinearLayoutCompat buttonsL = new LinearLayoutCompat(context);
+		buttonsL.setId(ViewCompat.generateViewId());
+		buttonsL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		buttonsL.setOrientation(LinearLayoutCompat.VERTICAL);
+		buttonsL.addView(settingsB);
+		buttonsL.addView(deleteB);
+
+
 		//add everything to the layout
 		this.addView(detailsL);
-		this.addView(settingsB);
+		this.addView(buttonsL);
 	}
 }

@@ -1,9 +1,7 @@
-# TargetApp
+# OverseerApp
 Part of the Geofencing package. This app is used by the tracker.
 
 ## Todo
-
-Target addition using the unique codes
 
 Target removal
 
@@ -17,13 +15,15 @@ Give user the ability to change the number of tracked users up to a certain limi
 
 ## Done
 
-Target listing (untested)
+Target addition using the unique codes
+
+Target listing
 
 Location update requests for all tracked users (untested)
 
-Tracked user list request from server database (stored in the OverseerUser dbContext - also untested)
+Tracked user list request from server database
 
-Tracked user list stored in CurrentUser class (untested)
+Tracked user list stored in CurrentUser class
 
 Basic user management (registration, login etc)
 

@@ -113,7 +113,7 @@
                 android:layout_below="@id/logLoginB"
                 android:layout_centerHorizontal="true"
                 android:padding="10dp"
-                android:text="@string/don_t_have_an_account_nregister_instead"
+                android:text="@string/don_t_have_an_account_register_instead"
                 android:textSize="20sp"
                 android:enabled="false" />
 

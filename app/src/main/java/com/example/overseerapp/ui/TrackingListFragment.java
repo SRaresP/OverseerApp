@@ -1,7 +1,7 @@
 package com.example.overseerapp.ui;
 
 import android.app.Activity;
-import android.graphics.Color;
+import android.app.AlertDialog;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -9,10 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.format.DateUtils;
@@ -20,19 +16,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.R;
 import com.example.overseerapp.location.LocationHandler;
 import com.example.overseerapp.server_comm.CurrentUser;
-import com.example.overseerapp.server_comm.ServerHandler;
 import com.example.overseerapp.tracking.TrackedUser;
-import com.example.overseerapp.tracking.TrackedUsersHandler;
 import com.example.overseerapp.ui.custom.CodeDialogFragment;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public class TrackingListFragment extends Fragment {
 	private static final String TAG = "TrackingListFragment";
@@ -81,9 +73,10 @@ public class TrackingListFragment extends Fragment {
 		addNewTrackedUserB.setEnabled(false);
 
 		overseerApp.getExecutorService().execute(() -> {
-			TrackedUsersHandler.updateTrackedUsersFromIds();
+			CurrentUser.resetTrackedUsers();
+			CurrentUser.addTrackedUsersFromIds();
 
-			TrackedUser[] users = TrackedUsersHandler.getTrackedUsers();
+			TrackedUser[] users = CurrentUser.getTrackedUsers();
 			for (TrackedUser user : users) {
 				if (user == null) continue;
 				String lastLocation = LocationHandler.getLastLocation(user.getLocationHistory());
@@ -104,6 +97,7 @@ public class TrackingListFragment extends Fragment {
 					//add a new view with all the information
 					overseerApp.getMainThreadHandler().post(() -> {
 						trackingListL.addView(new UserEntryLayout(activity,
+								this,
 								user.getName(),
 								user.getId(),
 								address,
@@ -114,7 +108,7 @@ public class TrackingListFragment extends Fragment {
 				}
 			}
 
-			if (TrackedUsersHandler.freeSlots() < 1) {
+			if (CurrentUser.freeTrackingSlots() < 1) {
 				overseerApp.getMainThreadHandler().post(() -> {
 					addNewTrackedUserB.setText(R.string.tracking_list_already_full);
 					addNewTrackedUserB.setEnabled(false);
@@ -126,7 +120,7 @@ public class TrackingListFragment extends Fragment {
 			}
 			overseerApp.getMainThreadHandler().post(() -> {
 				addNewTrackedUserB.setOnClickListener((view) -> {
-					CodeDialogFragment codeDialogFragment = new CodeDialogFragment(trackingListL);
+					CodeDialogFragment codeDialogFragment = new CodeDialogFragment(trackingListL, this);
 					codeDialogFragment.show(requireActivity().getSupportFragmentManager(), "CodeDialog");
 				});
 			});

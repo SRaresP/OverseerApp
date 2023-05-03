@@ -17,7 +17,6 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
-import com.example.overseerapp.tracking.TrackedUsersHandler;
 import com.example.overseerapp.ui.PrimaryActivity;
 import com.example.overseerapp.ui.custom.LoadingView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -55,10 +54,6 @@ public class AuthActivity extends AppCompatActivity {
 			try {
 				Socket socket = ServerHandler.login();
 				String response = ServerHandler.receive(socket).trim();
-				//now I know why
-				//TODO: redo all of these to use .equals()
-				//THIS IF ONLY WORKS IF I USE "CONTAINS" INSTEAD OF "EQUALS"
-				//AND I HAVE NO IDEA WHY GOD HELP US ALL
 				if (response.contains(ServerHandler.LOGGED_IN)) {
 					try {
 						CurrentUser.saveToDisk();
@@ -72,8 +67,12 @@ public class AuthActivity extends AppCompatActivity {
 					String[] userDetails = response.split(String.valueOf(OverseerApp.COMM_SEPARATOR))[1].split(String.valueOf(OverseerApp.USER_SEPARATOR));
 					//set those user details
 					CurrentUser.name = userDetails[0];
-					CurrentUser.trackedUserIDs = userDetails[1];
-					TrackedUsersHandler.addTrackedUsersFromIds();
+					try {
+						CurrentUser.setTrackedUserIDs(userDetails[1]);
+					} catch (Exception e) {
+						Log.e(TAG, e.getMessage());
+					}
+					CurrentUser.addTrackedUsersFromIds();
 					overseerApp.getMainThreadHandler().post(() -> {
 						Intent intent = new Intent(this, PrimaryActivity.class);
 						intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -126,7 +125,11 @@ public class AuthActivity extends AppCompatActivity {
 		loginB.setOnClickListener(view -> {
 			String email = emailTIET.getText().toString();
 			String password = passwordTIET.getText().toString();
-			CurrentUser.setCurrentUser(email, "", password, "");
+			try {
+				CurrentUser.setCurrentUser(email, "", password, "");
+			} catch (Exception e) {
+				Log.e(TAG, e.getMessage());
+			}
 
 			//LoadingView loadingView = new LoadingView(innerRelLayout, this, "Logging in", null, new AppCompatButton[] {loginB, registerB}, false).show();
 			AlertDialog alertDialogClassicLogin = new AlertDialog.Builder(this)

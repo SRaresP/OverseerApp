@@ -20,6 +20,7 @@ public class ServerHandler {
 	private static final String EDIT_OVERSEER = "EDIT_OVERSEER";
 	private static final String ADD_TARGET = "ADD_TARGET";
 	private static final String GET_USER = "GET_USER";
+	private static final String REMOVE_TARGET = "REMOVE_TARGET";
 
 	//replies from server
 	//positive
@@ -28,6 +29,7 @@ public class ServerHandler {
 	public static final String EDITED = "EDITED";
 	public static final String GOT_USER = "GOT_USER";
 	public static final String ADDED_TARGET = "ADDED_TARGET";
+	public static final String REMOVED_TARGET = "REMOVED_TARGET";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -100,7 +102,25 @@ public class ServerHandler {
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
+	}
 
+	public static Socket removeTarget(int id) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(REMOVE_TARGET)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(id);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
 	}
 
 	public static String receive(final @NonNull Socket socket) throws IOException {
