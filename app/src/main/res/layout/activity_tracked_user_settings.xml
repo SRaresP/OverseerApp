@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The ID's in this file should always start with
+"trset" to denote the activity -->
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.TrackedUserSettingsActivity"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/trsetUserLabelTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/editing_settings_for_user"
+        android:labelFor="@id/trsetUserTV"/>
+
+    <TextView
+        android:id="@+id/trsetUserTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/placeholder"
+        android:textSize="30sp"/>
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/trsetBackB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        android:background="#000"
+        android:padding="5dp"/>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/trsetLocationUpdateIntervalL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/trsetLocationUpdateIntervalTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/location_update_interval"
+            android:labelFor="@id/trsetLocationUpdateET"
+            android:layout_weight="1"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/trsetLocationUpdateET"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/trsetSaveB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:background="#000"
+        android:textColor="#fff"
+        android:padding="5dp"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

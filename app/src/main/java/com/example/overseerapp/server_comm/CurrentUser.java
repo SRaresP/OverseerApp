@@ -13,6 +13,8 @@ import com.example.overseerapp.tracking.UserNotFoundException;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CurrentUser {
 	private static final String TAG = "CurrentUser";
@@ -27,11 +29,11 @@ public class CurrentUser {
 	private static String trackedUserIDs = "";
 
 	// not stored on disk
-	private static TrackedUser[] trackedUsers = new TrackedUser[TRACKED_USER_CAPACITY];
+	private static HashMap<Integer, TrackedUser> trackedUsers = new HashMap(TRACKED_USER_CAPACITY);
 	private static long currentNrOfTrackedUserIds = 0;
 	private static int additionIndex = 0;
 
-	//do not call constructor, use static methods
+	// do not call constructor, use static methods
 	private CurrentUser() { }
 
 	public static void setCurrentUser(final @NonNull String Email, final @NonNull String Name, final @NonNull String password, final @NonNull String trackedUserIDs) throws TrackingSlotsAmountException {
@@ -112,7 +114,7 @@ public class CurrentUser {
 	}
 
 	public static void resetTrackedUsers() {
-		trackedUsers = new TrackedUser[TRACKED_USER_CAPACITY];
+		trackedUsers = new HashMap();
 		additionIndex = 0;
 	}
 
@@ -141,25 +143,24 @@ public class CurrentUser {
 	public static void addTrackedUserFromString(@NonNull String trackedUserString) {
 		String[] userDetails = trackedUserString.split(String.valueOf(OverseerApp.USER_SEPARATOR));
 		TrackedUser trackedUser = new TrackedUser(Integer.parseInt(userDetails[0]), userDetails[1], userDetails[2]);
-		trackedUsers[additionIndex++] = trackedUser;
+		trackedUsers.put(trackedUser.getId(), trackedUser);
+		++additionIndex;
 	}
 
-	public static TrackedUser[] getTrackedUsers() {
+	public static HashMap<Integer, TrackedUser> getTrackedUsers() {
 		return trackedUsers;
 	}
 
 	public static void updateTrackedUser(int userId, String locationHistory) throws UserNotFoundException {
-		TrackedUser foundUser = null;
-		for (TrackedUser user : trackedUsers) {
-			if (user.getId() == userId) {
-				foundUser = user;
-				break;
-			}
-		}
-		if (foundUser == null) {
+		if (!trackedUsers.containsKey(userId)) {
 			throw new UserNotFoundException("Could not find user when updating user id " + userId);
 		}
-		foundUser.updateLocationHistory(locationHistory);
+
+		TrackedUser user = trackedUsers.get(userId);
+		if (user == null) {
+			throw new UserNotFoundException("User was null when updating user id " + userId);
+		}
+		user.updateLocationHistory(locationHistory);
 	}
 
 	public static void updateTrackedUsersFromIds() {

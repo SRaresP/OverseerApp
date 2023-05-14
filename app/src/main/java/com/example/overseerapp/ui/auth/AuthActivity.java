@@ -34,10 +34,42 @@ public class AuthActivity extends AppCompatActivity {
 
 	private void setUpForManualLogin(final @Nullable AlertDialog alertDialog, final @Nullable String toToast) {
 		OverseerApp.getInstance().getMainThreadHandler().post(() -> {
+			setContentView(R.layout.activity_auth);
+
+			loginB = findViewById(R.id.logLoginB);
+			registerB = findViewById(R.id.logRegisterB);
+			emailTIET = findViewById(R.id.logEmailTIET);
+			passwordTIET = findViewById(R.id.logPasswordTIET);
+
+			loginB.setOnClickListener(view -> {
+				String email = emailTIET.getText().toString();
+				String password = passwordTIET.getText().toString();
+				try {
+					CurrentUser.setCurrentUser(email, "", password, "");
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+
+				//LoadingView loadingView = new LoadingView(innerRelLayout, this, "Logging in", null, new AppCompatButton[] {loginB, registerB}, false).show();
+				AlertDialog alertDialogClassicLogin = new AlertDialog.Builder(this)
+						.setView(new LoadingView(this, "Logging in", false))
+						.setCancelable(false)
+						.create();
+				alertDialogClassicLogin.show();
+				loginAndContinueAsync(alertDialogClassicLogin);
+			});
+
+			registerB.setOnClickListener(view -> {
+				Intent intent = new Intent(this, RegisterActivity.class);
+				startActivity(intent);
+			});
+
+
 			emailTIET.setEnabled(true);
 			passwordTIET.setEnabled(true);
 			loginB.setEnabled(true);
 			registerB.setEnabled(true);
+
 			if (toToast != null) {
 				Toast.makeText(this, toToast, Toast.LENGTH_SHORT).show();
 			}
@@ -103,47 +135,12 @@ public class AuthActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_auth);
-
-		boolean isPresent = Geocoder.isPresent();
-
-		OverseerApp overseerApp = OverseerApp.getInstance();
-
-		RelativeLayout innerRelLayout = findViewById(R.id.logInnerRelLayout);
-		loginB = findViewById(R.id.logLoginB);
-		registerB = findViewById(R.id.logRegisterB);
 
 		AlertDialog alertDialogAutoLogin = new AlertDialog.Builder(this)
 				.setView(new LoadingView(this, "Attempting to log in using stored credentials", true))
 				.setCancelable(false)
 				.create();
 		alertDialogAutoLogin.show();
-
-		emailTIET = findViewById(R.id.logEmailTIET);
-		passwordTIET = findViewById(R.id.logPasswordTIET);
-
-		loginB.setOnClickListener(view -> {
-			String email = emailTIET.getText().toString();
-			String password = passwordTIET.getText().toString();
-			try {
-				CurrentUser.setCurrentUser(email, "", password, "");
-			} catch (Exception e) {
-				Log.e(TAG, e.getMessage());
-			}
-
-			//LoadingView loadingView = new LoadingView(innerRelLayout, this, "Logging in", null, new AppCompatButton[] {loginB, registerB}, false).show();
-			AlertDialog alertDialogClassicLogin = new AlertDialog.Builder(this)
-					.setView(new LoadingView(this, "Logging in", false))
-					.setCancelable(false)
-					.create();
-			alertDialogClassicLogin.show();
-			loginAndContinueAsync(alertDialogClassicLogin);
-		});
-
-		registerB.setOnClickListener(view -> {
-			Intent intent = new Intent(this, RegisterActivity.class);
-			startActivity(intent);
-		});
 
 		try {
 			CurrentUser.setCurrentUserFromDisk();

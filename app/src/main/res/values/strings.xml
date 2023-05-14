@@ -32,4 +32,7 @@
     <string name="too_many_tracked_users_to_list">There are too many tracked users that need to be listed, something went wrong.</string>
     <string name="tracked_users_list_already_full">Tracked users list is already full</string>
     <string name="io_error_communicating_with_server">In/Out error communicating with server</string>
+    <string name="location_update_interval">Location update interval:</string>
+    <string name="save">Save</string>
+    <string name="editing_settings_for_user">Editing settings for user:</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.overseerapp.ui;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -79,6 +80,11 @@ public class UserEntryLayout extends LinearLayoutCompat {
 		settingsB.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		settingsB.setImageResource(R.drawable.ic_baseline_settings_24);
 		settingsB.setPadding(15, 15, 15, 15);
+		settingsB.setOnClickListener((view) -> {
+			Intent intent = new Intent(context, TrackedUserSettingsActivity.class);
+			intent.putExtra("userId", userId);
+			context.startActivity(intent);
+		});
 
 		//create delete button
 		AppCompatImageButton deleteB = new AppCompatImageButton(context);

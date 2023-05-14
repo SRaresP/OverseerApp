@@ -14,16 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OverseerApp"
         tools:targetApi="31">
-        <activity android:name=".ui.auth.AuthActivity"
+        <activity
+            android:name=".ui.TrackedUserSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.auth.RegisterActivity" />
         <activity android:name=".ui.PrimaryActivity" />
-
     </application>
 
 </manifest>

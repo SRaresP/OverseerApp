@@ -25,6 +25,7 @@ import com.example.overseerapp.tracking.TrackedUser;
 import com.example.overseerapp.ui.custom.CodeDialogFragment;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class TrackingListFragment extends Fragment {
 	private static final String TAG = "TrackingListFragment";
@@ -76,9 +77,9 @@ public class TrackingListFragment extends Fragment {
 			CurrentUser.resetTrackedUsers();
 			CurrentUser.addTrackedUsersFromIds();
 
-			TrackedUser[] users = CurrentUser.getTrackedUsers();
-			for (TrackedUser user : users) {
-				if (user == null) continue;
+			HashMap<Integer, TrackedUser> users = CurrentUser.getTrackedUsers();
+			users.forEach((userId, user) -> {
+				if (user == null) return;
 				String lastLocation = LocationHandler.getLastLocation(user.getLocationHistory());
 
 				//get the last latitude-long from the location history
@@ -106,7 +107,7 @@ public class TrackingListFragment extends Fragment {
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
 				}
-			}
+			});
 
 			if (CurrentUser.freeTrackingSlots() < 1) {
 				overseerApp.getMainThreadHandler().post(() -> {
