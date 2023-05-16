@@ -3,65 +3,98 @@
 <!-- The ID's in this file should always start with
 "trset" to denote the activity -->
 
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.TrackedUserSettingsActivity"
-    android:padding="20dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/trsetUserLabelTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/editing_settings_for_user"
-        android:labelFor="@id/trsetUserTV"/>
-
-    <TextView
-        android:id="@+id/trsetUserTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/placeholder"
-        android:textSize="30sp"/>
-
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/trsetBackB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        android:background="#000"
-        android:padding="5dp"/>
+    android:layout_height="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/trsetLocationUpdateIntervalL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="20dp"
+        tools:context=".ui.TrackedUserSettingsActivity">
 
-        <TextView
-            android:id="@+id/trsetLocationUpdateIntervalTV"
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/trsetBackB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/location_update_interval"
-            android:labelFor="@id/trsetLocationUpdateET"
-            android:layout_weight="1"/>
+            android:background="#000"
+            android:padding="5dp"
+            android:src="@drawable/ic_baseline_arrow_back_24" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/trsetLocationUpdateET"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/trsetUserLabelTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/trsetUserTV"
+            android:text="@string/editing_settings_for_user"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/trsetUserTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder"
+            android:textSize="30sp"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/trsetIntervalTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:labelFor="@id/trsetIntervalET"
+            android:text="@string/location_update_interval" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/trsetLocationUpdateIntervalL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/trsetIntervalET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:layout_weight="1"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/trsetResetIntervalB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#000"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_rotate_left_24"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/trsetIntervalHelp1TV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/trsetIntervalET"
+            android:text="@string/value_expressed_in_seconds"
+            android:textAlignment="textEnd" />
+
+        <TextView
+            android:id="@+id/trsetIntervalHelp2TV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/trsetIntervalET"
+            android:text="@string/please_note_that_anything_lower_than_5_minutes" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/trsetSaveB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000"
+            android:padding="5dp"
+            android:text="@string/save"
+            android:textColor="#fff" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/trsetSaveB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:background="#000"
-        android:textColor="#fff"
-        android:padding="5dp"/>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

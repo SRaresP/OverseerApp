@@ -21,6 +21,9 @@ public class ServerHandler {
 	private static final String ADD_TARGET = "ADD_TARGET";
 	private static final String GET_USER = "GET_USER";
 	private static final String REMOVE_TARGET = "REMOVE_TARGET";
+	private static final String GET_SETTINGS = "GET_SETTINGS";
+	private static final String CHANGE_SETTINGS = "CHANGE_SETTINGS";
+	private static final String REMOVE_SETTINGS = "REMOVE_SETTINGS";
 
 	//replies from server
 	//positive
@@ -30,10 +33,16 @@ public class ServerHandler {
 	public static final String GOT_USER = "GOT_USER";
 	public static final String ADDED_TARGET = "ADDED_TARGET";
 	public static final String REMOVED_TARGET = "REMOVED_TARGET";
+	public static final String GOT_SETTINGS = "GOT_SETTINGS";
+	public static final String CHANGED_SETTINGS = "CHANGED_SETTINGS";
+	public static final String REMOVED_SETTINGS = "REMOVED_SETTINGS";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
 	public static final String EMAIL_ALREADY_TAKEN = "EMAIL_ALREADY_TAKEN";
+	public static final String COULD_NOT_REMOVE_TARGET = "COULD_NOT_REMOVE_TARGET";
+	public static final String NOT_A_TARGET_ID = "NOT_A_TARGET_ID";
+	public static final String NOT_AN_INTERVAL = "NOT_AN_INTERVAL";
 	//code problem
 	public static final String UNDEFINED_CASE = "UNDEFINED_CASE";
 
@@ -118,6 +127,65 @@ public class ServerHandler {
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
 				.append(id);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+	}
+
+	public static Socket getSettings(int targetId) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(GET_SETTINGS)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+	}
+
+	public static Socket changeSettings(int targetId, int interval) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(CHANGE_SETTINGS)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(interval);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+	}
+
+	public static Socket removeSettings(int targetId) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(REMOVE_SETTINGS)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;

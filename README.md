@@ -13,6 +13,8 @@ Give user the ability to change the number of tracked users up to a certain limi
 
 ## Done
 
+Implemented persistent settings for overseer - target pairs 
+
 Target removal
 
 Target addition using the unique codes

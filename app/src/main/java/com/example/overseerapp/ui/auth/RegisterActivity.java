@@ -65,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
 							startActivity(intent);
 							finish();
 						} else if (response.contains(ServerHandler.EMAIL_ALREADY_TAKEN)) {
-							Toast.makeText(this, "That email is taken", Toast.LENGTH_LONG).show();
+							Toast.makeText(this, "That email is taken", Toast.LENGTH_SHORT).show();
 						} else {
 							Toast.makeText(this, "Server sent an unexpected reply", Toast.LENGTH_SHORT).show();
 						}
@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
 					overseerApp.getMainThreadHandler().post(() -> {
-						Toast.makeText(this, "Error communicating with server", Toast.LENGTH_LONG).show();
+						Toast.makeText(this, "Error communicating with server", Toast.LENGTH_SHORT).show();
 					});
 				}
 			});
