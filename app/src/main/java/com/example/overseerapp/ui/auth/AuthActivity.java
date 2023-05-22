@@ -17,6 +17,7 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
+import com.example.overseerapp.tracking.TrackerService;
 import com.example.overseerapp.ui.PrimaryActivity;
 import com.example.overseerapp.ui.custom.LoadingView;
 import com.google.android.material.textfield.TextInputEditText;

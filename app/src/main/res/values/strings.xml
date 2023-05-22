@@ -39,4 +39,6 @@
     <string name="please_note_that_anything_lower_than_5_minutes">Please note that anything lower than 5 minutes might put unnecessary strain on this device as well as the device of the user that is being tracked. Make sure that a very low update interval is necessary before setting it as such. Prefer using values above 30 minutes if you can. The value displayed when first entering this page is the current update interval.</string>
     <string name="interval_was_invalid">The interval was invalid. Please make sure you entered a whole number between 0 and %1$d.</string>
     <string name="successful_settings_update">Successful settings update.</string>
+    <string name="user_map_activity">UserMapActivity</string>
+    <string name="title_activity_users_map">UsersMapActivity</string>
 </resources>

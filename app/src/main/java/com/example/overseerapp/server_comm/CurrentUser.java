@@ -124,7 +124,7 @@ public class CurrentUser {
 			if (id.equals("")) continue;
 			try {
 				Socket socket = ServerHandler.getUser(id);
-				String[] response = ServerHandler.receive(socket).split(String.valueOf(OverseerApp.COMM_SEPARATOR));
+				String[] response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
 
 				//didn't receive location history
 				if (!response[0].equals(ServerHandler.GOT_USER)) {
@@ -142,7 +142,7 @@ public class CurrentUser {
 
 	public static void addTrackedUserFromString(@NonNull String trackedUserString) {
 		String[] userDetails = trackedUserString.split(String.valueOf(OverseerApp.USER_SEPARATOR));
-		TrackedUser trackedUser = new TrackedUser(Integer.parseInt(userDetails[0]), userDetails[1], userDetails[2]);
+		TrackedUser trackedUser = new TrackedUser(Integer.parseInt(userDetails[0]), userDetails[1], userDetails[2], Integer.parseInt(userDetails[3]));
 		trackedUsers.put(trackedUser.getId(), trackedUser);
 		++additionIndex;
 	}
@@ -151,7 +151,7 @@ public class CurrentUser {
 		return trackedUsers;
 	}
 
-	public static void updateTrackedUser(int userId, String locationHistory) throws UserNotFoundException {
+	public static void updateTrackedUser(int userId, String locationHistory, int updateInterval) throws UserNotFoundException {
 		if (!trackedUsers.containsKey(userId)) {
 			throw new UserNotFoundException("Could not find user when updating user id " + userId);
 		}
@@ -161,6 +161,7 @@ public class CurrentUser {
 			throw new UserNotFoundException("User was null when updating user id " + userId);
 		}
 		user.updateLocationHistory(locationHistory);
+		user.setUpdateInterval(updateInterval);
 	}
 
 	public static void updateTrackedUsersFromIds() {
@@ -179,8 +180,10 @@ public class CurrentUser {
 				}
 
 				//received location history
+				String[] userDetails = response[1].split(String.valueOf(OverseerApp.USER_SEPARATOR));
 				CurrentUser.updateTrackedUser(Integer.parseInt(id),
-						response[1].split(String.valueOf(OverseerApp.USER_SEPARATOR))[2]);
+						userDetails[2],
+						Integer.parseInt(userDetails[3]));
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage(), e);
 			}

@@ -1,6 +1,8 @@
 package com.example.overseerapp;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -28,14 +30,27 @@ public class OverseerApp extends Application {
 	// \/ used to separate user info like email, name, password etc \/
 	public static final char USER_SEPARATOR = '√';
 
+	public static final String STATUS_NOTIFICATION_CHANNEL = "status_notification_channel";
+
+	public static final int STATUS_NOTIFICATION_ID = 1;
+
 	private static OverseerApp instance;
 
 	private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 	private final Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
 
+	private NotificationChannel statusNotificationChannel;
+
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
+
+		statusNotificationChannel = new NotificationChannel(
+				STATUS_NOTIFICATION_CHANNEL,
+				"Status notification",
+				NotificationManager.IMPORTANCE_NONE);
+		NotificationManager notificationManager = getSystemService(NotificationManager.class);
+		notificationManager.createNotificationChannel(statusNotificationChannel);
 	}
 
 	public static OverseerApp getInstance() {
@@ -49,4 +64,6 @@ public class OverseerApp extends Application {
 	public Handler getMainThreadHandler() {
 		return mainThreadHandler;
 	}
+
+	public NotificationChannel getStatusNotificationChannel() { return statusNotificationChannel; }
 }

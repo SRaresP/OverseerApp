@@ -24,6 +24,7 @@ public class ServerHandler {
 	private static final String GET_SETTINGS = "GET_SETTINGS";
 	private static final String CHANGE_SETTINGS = "CHANGE_SETTINGS";
 	private static final String REMOVE_SETTINGS = "REMOVE_SETTINGS";
+	private static final String GET_TARGET_LOCATION_AND_INTERVAL = "GET_TARGET_LOCATION_AND_INTERVAL";
 
 	//replies from server
 	//positive
@@ -36,6 +37,7 @@ public class ServerHandler {
 	public static final String GOT_SETTINGS = "GOT_SETTINGS";
 	public static final String CHANGED_SETTINGS = "CHANGED_SETTINGS";
 	public static final String REMOVED_SETTINGS = "REMOVED_SETTINGS";
+	public static final String GOT_TARGET_LOCATION_AND_INTERVAL = "GOT_TARGET_LOCATION_AND_INTERVAL";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -202,5 +204,24 @@ public class ServerHandler {
 		socket.close();
 
 		return String.valueOf(response);
+	}
+
+	public static Socket getTargetLocationAndInterval(int targetId) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(GET_TARGET_LOCATION_AND_INTERVAL)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
 	}
 }

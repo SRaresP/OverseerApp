@@ -3,8 +3,6 @@ Part of the Geofencing package. This app is used by the tracker.
 
 ## Todo
 
-Target viewing on a map
-
 Geofence creation within these maps
 
 Global map, elaborate later
@@ -12,6 +10,8 @@ Global map, elaborate later
 Give user the ability to change the number of tracked users up to a certain limit
 
 ## Done
+
+Target viewing on a map
 
 Implemented persistent settings for overseer - target pairs 
 

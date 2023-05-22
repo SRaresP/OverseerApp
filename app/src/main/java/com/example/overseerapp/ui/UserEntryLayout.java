@@ -134,6 +134,18 @@ public class UserEntryLayout extends LinearLayoutCompat {
 					.show();
 		});
 
+		//create the map button
+		AppCompatImageButton mapB = new AppCompatImageButton(context);
+		mapB.setId(ViewCompat.generateViewId());
+		mapB.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		mapB.setImageResource(R.drawable.ic_baseline_location_on_24);
+		mapB.setPadding(15, 15, 15, 15);
+		mapB.setOnClickListener((view) -> {
+			Intent intent = new Intent(context, UsersMapActivity.class);
+			intent.putExtra("userId", userId);
+			context.startActivity(intent);
+		});
+
 		//create the buttons wrapper
 		LinearLayoutCompat buttonsL = new LinearLayoutCompat(context);
 		buttonsL.setId(ViewCompat.generateViewId());
@@ -145,6 +157,7 @@ public class UserEntryLayout extends LinearLayoutCompat {
 
 		//add everything to the layout
 		this.addView(detailsL);
+		this.addView(mapB);
 		this.addView(buttonsL);
 	}
 }
