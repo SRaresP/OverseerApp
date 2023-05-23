@@ -1,9 +1,9 @@
 package com.example.overseerapp.ui;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.overseerapp.databinding.ActivityUsersMapBinding;
 
@@ -26,9 +27,19 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	private GoogleMap mMap;
 	private ActivityUsersMapBinding binding;
 
+	private TrackedUser user;
+	private Marker marker;
+	private final Observer<String> locationAnnouncer = (history) -> {
+		String[] lastLocation = LocationHandler.getLastLocation(history)
+				.split(String.valueOf(OverseerApp.DATE_LAT_LONG_SEPARATOR));
+		double latitude = Double.parseDouble(lastLocation[1]);
+		double longitude = Double.parseDouble(lastLocation[2]);
+		marker.setPosition(new LatLng(latitude, longitude));
+	};
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	protected void onResume() {
+		super.onResume();
 
 		binding = ActivityUsersMapBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
@@ -57,7 +68,7 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		if (userId == -1) {
 			Log.e(TAG, "User not passed to UsersMapActivity.");
 		}
-		TrackedUser user = CurrentUser.getTrackedUsers().get(userId);
+		user = CurrentUser.getTrackedUsers().get(userId);
 		if (user == null) {
 			Log.e(TAG, "No user found by id in UsersMapActivity.");
 			return;
@@ -75,10 +86,18 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		}
 
 		LatLng targetPosition = new LatLng(latitude, longitude);
-		mMap.addMarker(new MarkerOptions().position(targetPosition));
+		marker = mMap.addMarker(new MarkerOptions().position(targetPosition));
 
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(targetPosition, 13f));
 
 		Toast.makeText(this, "Lat: " + targetPosition.latitude + "; Lon: " + targetPosition.longitude, Toast.LENGTH_SHORT).show();
+
+		user.subscribeLocationHistory(locationAnnouncer);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		user.unsubscribeLocationHistory(locationAnnouncer);
 	}
 }

@@ -1,41 +1,21 @@
 package com.example.overseerapp.ui;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.overseerapp.R;
-import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.tracking.TrackerService;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class PrimaryActivity extends AppCompatActivity {
 	private static final String TAG = "PrimaryActivity";
-
-	private void startTrackerService() {
-		Intent intent = new Intent(this, TrackerService.class);
-		startForegroundService(intent);
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +46,16 @@ public class PrimaryActivity extends AppCompatActivity {
 			}, 10000);
 			return;
 		}
+		Intent intent = new Intent(this, TrackerService.class);
+		startForegroundService(intent);
+	}
 
-		startTrackerService();
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Intent intent = new Intent(this, TrackerService.class);
+		stopService(intent);
+		intent = new Intent(this, TrackerService.class);
+		startForegroundService(intent);
 	}
 }

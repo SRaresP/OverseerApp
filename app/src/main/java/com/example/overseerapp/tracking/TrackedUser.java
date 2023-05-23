@@ -4,9 +4,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.example.overseerapp.OverseerApp;
-import com.example.overseerapp.location.LocationHandler;
 import com.example.overseerapp.server_comm.ServerHandler;
 
 import java.net.Socket;
@@ -18,7 +19,7 @@ public class TrackedUser {
 
 	private final int id;
 	private final String name;
-	private String locationHistory;
+	private MutableLiveData<String> locationHistory;
 	private int updateInterval;
 	private Timer updateTimer;
 	private TrackingTimerTask trackingTimerTask;
@@ -26,18 +27,19 @@ public class TrackedUser {
 	public TrackedUser(int id, @NonNull String Name) {
 		this.id = id;
 		this.name = Name;
+		locationHistory = new MutableLiveData<>();
 	}
 
 	public TrackedUser(int id, @NonNull String Name, @NonNull String locationHistory) {
 		this.id = id;
 		this.name = Name;
-		this.locationHistory = locationHistory;
+		this.locationHistory = new MutableLiveData<>(locationHistory);
 	}
 
-	public TrackedUser(int id, @NonNull String Name, @NonNull String locationHistory, @NonNull int updateInterval) {
+	public TrackedUser(int id, @NonNull String Name, @NonNull String locationHistory, int updateInterval) {
 		this.id = id;
 		this.name = Name;
-		this.locationHistory = locationHistory;
+		this.locationHistory = new MutableLiveData<>(locationHistory);
 		this.updateInterval = updateInterval;
 		updateTimer = new Timer("timer#" + id, true);
 		trackingTimerTask = new TrackingTimerTask(id, this);
@@ -51,10 +53,18 @@ public class TrackedUser {
 		return name;
 	}
 
-	public String getLocationHistory() { return locationHistory; }
+	public String getLocationHistory() { return locationHistory.getValue(); }
 
 	public void updateLocationHistory(String locationHistory) {
-		this.locationHistory = locationHistory;
+		this.locationHistory.setValue(locationHistory);
+	}
+
+	public void subscribeLocationHistory(Observer<String> callback) {
+		this.locationHistory.observeForever(callback);
+	}
+
+	public void unsubscribeLocationHistory(Observer<String> callback) {
+		this.locationHistory.removeObserver(callback);
 	}
 
 	public int getUpdateInterval() { return updateInterval; }
@@ -93,9 +103,10 @@ public class TrackedUser {
 				String[] response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
 				switch (response[0]) {
 					case ServerHandler.GOT_TARGET_LOCATION_AND_INTERVAL:
-						user.updateLocationHistory(response[1]);
+						OverseerApp.getInstance().getMainThreadHandler().post(() -> {
+							user.updateLocationHistory(response[1]);
+						});
 						user.setUpdateInterval(Integer.parseInt(response[2]));
-						Log.e(TAG, "Last location: " + LocationHandler.getLastLocation(user.getLocationHistory()));
 						break;
 					case ServerHandler.NOT_FOUND:
 						Log.e(TAG, "Overseer not found by server when trying to get location and interval for user id: " + id);
