@@ -8,9 +8,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.example.overseerapp.OverseerApp;
+import com.example.overseerapp.location.GeoArea;
 import com.example.overseerapp.server_comm.ServerHandler;
 
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,6 +23,7 @@ public class TrackedUser {
 	private final String name;
 	private MutableLiveData<String> locationHistory;
 	private int updateInterval;
+	public HashMap<Integer, GeoArea> geoAreas;
 	private Timer updateTimer;
 	private TrackingTimerTask trackingTimerTask;
 
@@ -43,6 +46,14 @@ public class TrackedUser {
 		this.updateInterval = updateInterval;
 		updateTimer = new Timer("timer#" + id, true);
 		trackingTimerTask = new TrackingTimerTask(id, this);
+	}
+
+	public TrackedUser(String trackedUser) {
+		String[] userDetails = trackedUser.split(String.valueOf(OverseerApp.USER_SEPARATOR));
+		this.id = Integer.parseInt(userDetails[0]);
+		this.name = userDetails[1];
+		this.locationHistory = new MutableLiveData<>(userDetails[2]);
+		this.updateInterval = Integer.parseInt(userDetails[3]);
 	}
 
 	public int getId() {

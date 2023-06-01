@@ -41,4 +41,11 @@
     <string name="successful_settings_update">Successful settings update.</string>
     <string name="user_map_activity">UserMapActivity</string>
     <string name="title_activity_users_map">UsersMapActivity</string>
+    <string name="geoarea_editing_mode">Geofence operation mode</string>
+    <string name="operation_mode">Operation mode</string>
+    <string name="move_map">Move map</string>
+    <string name="remove_geofence">Remove geofence</string>
+    <string name="add_geofence">Add geofence</string>
+    <string name="alert_inside">Alerting when inside</string>
+    <string name="alert_outside">Alerting when outside</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.R;
+import com.example.overseerapp.location.GeoArea;
 import com.example.overseerapp.server_comm.exceptions.TrackingSlotsAmountException;
 import com.example.overseerapp.storage.EncryptedStorageController;
 import com.example.overseerapp.tracking.TrackedUser;
@@ -114,7 +115,7 @@ public class CurrentUser {
 	}
 
 	public static void resetTrackedUsers() {
-		trackedUsers = new HashMap();
+		trackedUsers = new HashMap<Integer, TrackedUser>();
 		additionIndex = 0;
 	}
 
@@ -133,7 +134,24 @@ public class CurrentUser {
 				}
 
 				//received location history
-				CurrentUser.addTrackedUserFromString(response[1]);
+				TrackedUser user = new TrackedUser(response[1]);
+				int idInt = Integer.parseInt(id);
+
+				socket = ServerHandler.getGeoAreas(idInt);
+				response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
+
+				if (ServerHandler.GOT_GEOAREAS.equals(response[0])) {
+					// split doesn't return empty strings if the delimiter is at the end...
+					if (response.length > 1) {
+						user.geoAreas = GeoArea.GetGeoAreaMap(response[1]);
+					} else {
+						user.geoAreas = GeoArea.GetGeoAreaMap("");
+					}
+				} else {
+					Log.e(TAG, response[0] + " server response when requesting geoareas for id " + id + ": " + String.join("", response));
+				}
+
+				CurrentUser.addTrackedUser(user);
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage(), e);
 			}
@@ -144,6 +162,11 @@ public class CurrentUser {
 		String[] userDetails = trackedUserString.split(String.valueOf(OverseerApp.USER_SEPARATOR));
 		TrackedUser trackedUser = new TrackedUser(Integer.parseInt(userDetails[0]), userDetails[1], userDetails[2], Integer.parseInt(userDetails[3]));
 		trackedUsers.put(trackedUser.getId(), trackedUser);
+		++additionIndex;
+	}
+
+	public static void addTrackedUser(@NonNull TrackedUser user) {
+		trackedUsers.put(user.getId(), user);
 		++additionIndex;
 	}
 

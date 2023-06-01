@@ -3,6 +3,7 @@ package com.example.overseerapp.server_comm;
 import androidx.annotation.NonNull;
 
 import com.example.overseerapp.OverseerApp;
+import com.example.overseerapp.location.GeoArea;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,8 @@ public class ServerHandler {
 	private static final String CHANGE_SETTINGS = "CHANGE_SETTINGS";
 	private static final String REMOVE_SETTINGS = "REMOVE_SETTINGS";
 	private static final String GET_TARGET_LOCATION_AND_INTERVAL = "GET_TARGET_LOCATION_AND_INTERVAL";
+	private static final String GET_GEOAREAS = "GET_GEOAREAS";
+	private static final String ADD_GEOAREA = "ADD_GEOAREA";
 
 	//replies from server
 	//positive
@@ -38,6 +41,8 @@ public class ServerHandler {
 	public static final String CHANGED_SETTINGS = "CHANGED_SETTINGS";
 	public static final String REMOVED_SETTINGS = "REMOVED_SETTINGS";
 	public static final String GOT_TARGET_LOCATION_AND_INTERVAL = "GOT_TARGET_LOCATION_AND_INTERVAL";
+	public static final String GOT_GEOAREAS = "GOT_GEOAREAS";
+	public static final String ADDED_GEOAREAS = "ADDED_GEOAREA";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -45,6 +50,7 @@ public class ServerHandler {
 	public static final String COULD_NOT_REMOVE_TARGET = "COULD_NOT_REMOVE_TARGET";
 	public static final String NOT_A_TARGET_ID = "NOT_A_TARGET_ID";
 	public static final String NOT_AN_INTERVAL = "NOT_AN_INTERVAL";
+	public static final String NOT_A_GEOAREA = "NOT_A_GEOAREA";
 	//code problem
 	public static final String UNDEFINED_CASE = "UNDEFINED_CASE";
 
@@ -193,19 +199,6 @@ public class ServerHandler {
 		return socket;
 	}
 
-	public static String receive(final @NonNull Socket socket) throws IOException {
-
-		char[] response = new char[500];
-
-		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-		bufferedReader.read(response);
-		socket.close();
-
-		return String.valueOf(response);
-	}
-
 	public static Socket getTargetLocationAndInterval(int targetId) throws IOException {
 		Socket socket = new Socket(IP, PORT);
 		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
@@ -223,5 +216,62 @@ public class ServerHandler {
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
+	}
+
+	public static Socket getGeoAreas(int targetId) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(GET_GEOAREAS)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+	}
+
+	public static Socket addGeoArea(int targetId, String geoArea) throws IOException {
+		Socket socket = new Socket(IP, PORT);
+		PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+
+		StringBuilder stringBuilder = new StringBuilder()
+				.append(ADD_GEOAREA)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(CurrentUser.email)
+				.append(OverseerApp.USER_SEPARATOR)
+				.append("")
+				.append(OverseerApp.USER_SEPARATOR)
+				.append(CurrentUser.password)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(targetId)
+				.append(OverseerApp.COMM_SEPARATOR)
+				.append(geoArea);
+		printWriter.write(stringBuilder.toString());
+		printWriter.flush();
+		return socket;
+	}
+
+	public static Socket addGeoArea(int targetId, GeoArea geoArea) throws IOException {
+		return addGeoArea(targetId, geoArea.toString());
+	}
+
+	public static String receive(final @NonNull Socket socket) throws IOException {
+
+		char[] response = new char[500];
+
+		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+		bufferedReader.read(response);
+		socket.close();
+
+		return String.valueOf(response);
 	}
 }
