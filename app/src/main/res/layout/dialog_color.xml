@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The ID's in this file should always start with
+"pick" to denote the activity -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:res-auto="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:padding="5dp"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/pickTitleTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pick_a_new_color_for_the_geo_area"
+        android:textSize="25sp"
+        res-auto:layout_constraintTop_toTopOf="parent"
+        res-auto:layout_constraintLeft_toLeftOf="parent"
+        res-auto:layout_constraintRight_toRightOf="parent"
+        />
+
+    <com.rarepebble.colorpicker.ColorPickerView
+        android:id="@+id/pickColorPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        res-auto:colorpicker_showAlpha="false"
+        res-auto:layout_constraintTop_toBottomOf="@id/pickTitleTV"
+        res-auto:layout_constraintLeft_toLeftOf="parent"
+        res-auto:layout_constraintRight_toRightOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/pickCancelB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        res-auto:layout_constraintLeft_toLeftOf="parent"
+        res-auto:layout_constraintTop_toBottomOf="@id/pickColorPicker"
+        res-auto:layout_constraintRight_toLeftOf="@id/pickSaveB"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/pickSaveB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        res-auto:layout_constraintRight_toRightOf="parent"
+        res-auto:layout_constraintTop_toBottomOf="@id/pickColorPicker"
+        res-auto:layout_constraintLeft_toRightOf="@id/pickCancelB"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,22 @@
     <string name="move_map">Move map</string>
     <string name="remove_geofence">Remove geofence</string>
     <string name="add_geofence">Add geofence</string>
-    <string name="alert_inside">Alerting when inside</string>
-    <string name="alert_outside">Alerting when outside</string>
+    <string name="inside">inside</string>
+    <string name="outside">outside</string>
+    <string name="alerting_when">Alerting when</string>
+    <string name="color">Color</string>
+    <string name="geo_area_color">Geo area color</string>
+    <string name="pick_a_new_color_for_the_geo_area">Pick a new color for the geo area</string>
+    <string name="help">Help</string>
+    <string name="geofence_controls_help">Geofence controls help</string>
+    <string name="bottom_geo_controls_help">This bottom part of the controls interface allows you to select a mode of interacting with the geofences.\n• Add geofence - when you tap anywhere on the map, a geofence will pe added.\nAdjust the newly added geofence\'s size by holding down a finger on a place that you want the geofence to reach to.\n• Remove geofence - when you tap on an existing geofence, it will be removed from the map.\n• Move map - the default way to interact with the map.\nYou can pan around, zoom and focus on the target marker by clicking on it.</string>
+    <string name="mode_switch_help">This part of the controls interface is used to set the alert mode of the geo area.\n• When set to \"inside\", you will receive a notification when the user is inside of the area.\n• When set to \"outside\", you will receive a notification when the user is outside of the area.</string>
+    <string name="color_help">This part of the controls interface is used to set the color of the geo area.\nThe square indicates the current color. Tap it to change the color.</string>
+    <string name="save_help">This button will save your current geo area.\nIf it succeeds and the new geo area is saved on the server, you will get a confirmation.\nIf not, you will get an error message instead.</string>
+    <string name="clear_geofences">Clear geofences</string>
+    <string name="clear_help">This button will ask for confirmation before clearing all of the geofences that you have set.\nIt doesn\'t SAVE anything right away, so even if you do delete all the geofences by confirming, you will be able to get them back by simply pressing the back button or quitting the app.\nIf you don\'t save, the next time you see this map, the geofences should be back.</string>
+    <string name="exit">Exit</string>
+    <string name="delete_geofences_confirmation">Are you sure you want to delete all geofences?</string>
+    <string name="delete_them">Delete them</string>
+    <string name="keep_them">Keep them</string>
 </resources>

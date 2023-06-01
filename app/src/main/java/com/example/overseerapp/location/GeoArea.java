@@ -15,6 +15,8 @@ public class GeoArea {
 	private static final char AREA_DETAILS_SEPARATOR = '°';
 	private static final char FENCES_SEPARATOR = '≈';
 	private static final char AREAS_SEPARATOR = '÷';
+	public static final int DEFAULT_COLOR = 0xffffff;
+	public static final int DEFAULT_STROKE_COLOR = 0xff000000;
 
 	public enum GeoAreaMode {
 		ALERT_WHEN_INSIDE,
@@ -24,7 +26,7 @@ public class GeoArea {
 	private int id;
 	private int overseerId;
 	private int targetId;
-	private int color;
+	public int color;
 	public GeoAreaMode mode;
 	private ArrayList<GeoFence> geoFences;
 
@@ -65,7 +67,7 @@ public class GeoArea {
 	{
 		this.overseerId = overseerId;
 		this.targetId = targetId;
-		color = 0xffffff;
+		color = DEFAULT_COLOR;
 		geoFences = new ArrayList<GeoFence>(1);
 	}
 
@@ -73,7 +75,7 @@ public class GeoArea {
 	{
 		overseerId = -1;
 		targetId = -1;
-		color = 0xffffff;
+		color = DEFAULT_COLOR;
 		geoFences = new ArrayList<GeoFence>(0);
 	}
 

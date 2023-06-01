@@ -30,13 +30,53 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            >
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/mapHelpB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/help"
+                android:padding="10dp"
+                map:layout_constraintRight_toLeftOf="@id/mapClearB"
+                map:layout_constraintLeft_toLeftOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintBottom_toBottomOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/mapClearB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/clear_geofences"
+                map:layout_constraintLeft_toRightOf="@id/mapHelpB"
+                map:layout_constraintRight_toLeftOf="@id/mapSaveB"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintBottom_toBottomOf="parent"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/mapSaveB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="@string/save"
+                map:layout_constraintLeft_toRightOf="@id/mapClearB"
+                map:layout_constraintRight_toRightOf="parent"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/mapAlertModeTV"
+                android:id="@+id/mapAlertModeLabelTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/placeholder"
+                android:text="@string/alerting_when"
                 android:layout_marginRight="5dp"
                 map:layout_constraintLeft_toLeftOf="parent"
                 map:layout_constraintTop_toTopOf="parent"
@@ -46,28 +86,50 @@
                 android:id="@+id/mapAlertModeS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                map:layout_constraintLeft_toRightOf="@id/mapAlertModeTV"
+                android:layout_marginRight="5dp"
+                map:layout_constraintLeft_toRightOf="@id/mapAlertModeLabelTV"
                 map:layout_constraintTop_toTopOf="parent"
                 map:layout_constraintBottom_toBottomOf="parent"
+                android:checked="true"
                 />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/mapSaveB"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/mapAlertModeTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/save"
-                map:layout_constraintRight_toRightOf="parent"
+                android:text="@string/inside"
+                android:layout_marginLeft="5dp"
+                map:layout_constraintLeft_toRightOf="@id/mapAlertModeS"
                 map:layout_constraintTop_toTopOf="parent"
                 map:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                android:id="@+id/mapColorV"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintRight_toLeftOf="@id/mapColorTV"
+                android:background="@color/background_highlight"
+                android:layout_marginRight="5dp"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/mapColorTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/geo_area_color"
+                map:layout_constraintTop_toTopOf="parent"
+                map:layout_constraintBottom_toBottomOf="parent"
+                map:layout_constraintRight_toRightOf="parent"
+                android:layout_marginLeft="5dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/operation_mode" />
+            android:text="@string/operation_mode"
+            android:visibility="gone"/>
 
         <RadioGroup
             android:layout_width="match_parent"
