@@ -81,6 +81,9 @@ public class CodeDialogFragment extends DialogFragment {
 					} else if (ServerHandler.UNDEFINED_CASE.equals(response1[0])) {
 						displayErrorAndCancelDialog("Server reports that something undefined went wrong.", activity);
 						return;
+					}  else if (ServerHandler.ALREADY_TRACKING.equals(response1[0])) {
+						displayErrorAndCancelDialog("You're already tracking this user.", activity);
+						return;
 					} else {
 						displayErrorAndCancelDialog("Something went wrong inside the app.", activity);
 						return;

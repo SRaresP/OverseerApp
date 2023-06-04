@@ -3,11 +3,13 @@ package com.example.overseerapp.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.R;
 import com.example.overseerapp.tracking.TrackerService;
 
@@ -20,6 +22,8 @@ public class PrimaryActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		OverseerApp overseerApp = OverseerApp.getInstance();
+
 		setContentView(R.layout.activity_primary);
 
 		TrackingListFragment trackingListFragment = new TrackingListFragment();
@@ -46,16 +50,9 @@ public class PrimaryActivity extends AppCompatActivity {
 			}, 10000);
 			return;
 		}
-		Intent intent = new Intent(this, TrackerService.class);
-		startForegroundService(intent);
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Intent intent = new Intent(this, TrackerService.class);
+		Intent intent = new Intent(overseerApp, TrackerService.class);
 		stopService(intent);
-		intent = new Intent(this, TrackerService.class);
+		intent = new Intent(overseerApp, TrackerService.class);
 		startForegroundService(intent);
 	}
 }

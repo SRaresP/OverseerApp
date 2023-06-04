@@ -8,7 +8,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 
 public class GeoFence {
-	private static final char FENCE_DETAILS_SEPARATOR = '÷';
+	private static final char FENCE_DETAILS_SEPARATOR = '⌡';
 
 	private int id;
 	private int geoAreaId;

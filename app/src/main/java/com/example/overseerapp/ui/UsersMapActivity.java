@@ -2,6 +2,7 @@ package com.example.overseerapp.ui;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatRadioButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.SwitchCompat;
@@ -22,9 +23,12 @@ import com.example.overseerapp.location.GeoArea;
 import com.example.overseerapp.location.GeoFence;
 import com.example.overseerapp.location.LocationHandler;
 import com.example.overseerapp.server_comm.CurrentUser;
+import com.example.overseerapp.server_comm.ServerHandler;
 import com.example.overseerapp.tracking.TrackedUser;
 import com.example.overseerapp.ui.custom.ColorPickerDialog;
 import com.example.overseerapp.ui.custom.GeoControlsHelpDialog;
+import com.example.overseerapp.ui.custom.GeoSaveDialog;
+import com.example.overseerapp.ui.custom.LoadingView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,9 +40,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.overseerapp.databinding.ActivityUsersMapBinding;
 
+import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class UsersMapActivity extends FragmentActivity implements OnMapReadyCallback {
 	private static final String TAG = "UsersMapActivity";
@@ -67,7 +75,6 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	private View colorV;
 	private AppCompatButton saveB;
 	private AppCompatButton clearB;
-	private AppCompatButton helpB;
 
 	private void initUser() {
 		Intent intent = getIntent();
@@ -82,7 +89,6 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	}
 
 	private void initGeoFencing() {
-
 		circles = new ArrayList<>(1);
 		Iterator<Map.Entry<Integer, GeoArea>> geoIt = user.geoAreas.entrySet().iterator();
 		if (geoIt.hasNext()) {
@@ -100,7 +106,7 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 						.fillColor(geoAreaAlpha | geoArea.getColor())
 						.radius(geoFence.getRadiusMeters())
 						.strokeWidth(2)
-						.strokeColor(GeoArea.DEFAULT_COLOR));
+						.strokeColor(GeoArea.DEFAULT_STROKE_COLOR));
 				circles.add(circle);
 			}
 		}
@@ -110,7 +116,6 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	}
 
 	private void initColorPicker() {
-
 		colorV.setBackgroundColor(geoArea.getColor() | geoAreaAlpha);
 		ColorPickerDialog colorDialog = new ColorPickerDialog(this);
 		colorDialog.setOnSaveListener((view -> {
@@ -168,7 +173,7 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		moveRB = findViewById(R.id.mapMoveRB);
 		colorV = findViewById(R.id.mapColorV);
 		saveB = findViewById(R.id.mapSaveB);
-		helpB = findViewById(R.id.mapHelpB);
+		AppCompatButton helpB = findViewById(R.id.mapHelpB);
 		clearB = findViewById(R.id.mapClearB);
 
 		GeoControlsHelpDialog helpDialog = new GeoControlsHelpDialog(this);
@@ -188,8 +193,6 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 
 		initViews();
 		initUser();
-		initGeoFencing();
-		initColorPicker();
 	}
 
 	@Override
@@ -263,6 +266,16 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		}
 	}
 
+	private void clearCircles() {
+		Iterator<Circle> iterator = circles.iterator();
+		while (iterator.hasNext()) {
+			// remove circle from map
+			iterator.next().remove();
+			// remove circle from array list
+			iterator.remove();
+		}
+	}
+
 	public void initMapControls() {
 		addRB.setOnClickListener((view) -> {
 			makeCirclesClickable(false);
@@ -333,18 +346,69 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 					.setCancelable(true)
 					.setTitle(R.string.delete_geofences_confirmation)
 					.setPositiveButton(R.string.delete_them, (dialogInterface, i) -> {
-						Iterator<Circle> iterator = circles.iterator();
-						while (iterator.hasNext()) {
-							// remove circle from map
-							iterator.next().remove();
-							// remove circle from array list
-							iterator.remove();
-						}
+						clearCircles();
 					})
 					.setNegativeButton(R.string.keep_them, (dialogInterface, i) -> {
 						dialogInterface.cancel();
 					})
 					.show();
+		});
+
+		OverseerApp overseerApp = OverseerApp.getInstance();
+		saveB.setOnClickListener((view) -> {
+			GeoSaveDialog saveDialog = new GeoSaveDialog(this);
+			saveDialog.setSaveListener((view2) -> {
+				AppCompatEditText messageET = saveDialog.findViewById(R.id.savegMessageET);
+				String triggerMessage = messageET.getText().toString();
+				AlertDialog savingDialog = new AlertDialog.Builder(this)
+						.setView(new LoadingView(this, "Saving geo area, please wait", true))
+						.setCancelable(false)
+						.create();
+				savingDialog.show();
+				Timer timer = new Timer("SavingGeoAreaTimer", true);
+				timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						if (savingDialog.isShowing()) {
+							overseerApp.getMainThreadHandler().post(() -> {
+								Toast.makeText(overseerApp, "Server did not respond to the request to save. Your geo area was NOT yet saved.", Toast.LENGTH_LONG).show();
+							});
+							savingDialog.dismiss();
+						}
+					}
+				}, 10000);
+				geoArea.geoFences.clear();
+				geoArea.geoFences.ensureCapacity(circles.size());
+				for (Circle circle : circles) {
+					geoArea.geoFences.add(
+							new GeoFence(-1,
+									circle.getCenter().latitude,
+									circle.getCenter().longitude,
+									(int)circle.getRadius()));
+				}
+				overseerApp.getExecutorService().execute(() -> {
+					try {
+						geoArea.triggerMessage = triggerMessage;
+						Socket socket = ServerHandler.addGeoArea(user.getId(), geoArea);
+						String[] response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
+						if (response[0].equals(ServerHandler.ADDED_GEOAREA)) {
+							overseerApp.getMainThreadHandler().post(() -> {
+								savingDialog.dismiss();
+								Toast.makeText(overseerApp, "Saving successful!", Toast.LENGTH_SHORT).show();
+							});
+						}
+						else {
+							overseerApp.getMainThreadHandler().post(() -> {
+								Toast.makeText(overseerApp, "Failed saving your geo area. Please contact support. Received error message: " + response[0], Toast.LENGTH_SHORT).show();
+							});
+							Log.e(TAG, "Failed saving the geo area. Server response: " + String.join("", response));
+						}
+					} catch (IOException e) {
+						Log.e(TAG, e.getMessage(), e);
+					}
+				});
+			});
+			saveDialog.show(geoArea.triggerMessage);
 		});
 	}
 
@@ -361,13 +425,16 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	public void onMapReady(GoogleMap googleMap) {
 		map = googleMap;
 		initMarker();
+		initGeoFencing();
+		initColorPicker();
 		user.subscribeLocationHistory(locationAnnouncer);
 		initMapControls();
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
+		super.onStop();
 		user.unsubscribeLocationHistory(locationAnnouncer);
+		clearCircles();
 	}
 }

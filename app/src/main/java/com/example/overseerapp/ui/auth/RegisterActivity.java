@@ -68,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
 							Toast.makeText(this, "That email is taken", Toast.LENGTH_SHORT).show();
 						} else {
 							Toast.makeText(this, "Server sent an unexpected reply", Toast.LENGTH_SHORT).show();
+							Log.e(TAG, "Unexpected server reply: " + response);
 						}
 					});
 				} catch (IOException e) {

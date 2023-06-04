@@ -15,7 +15,8 @@
         android:id="@+id/primaryNavView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        android:visibility="gone">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/primaryNavButtonLayout"
@@ -43,7 +44,5 @@
         android:id="@+id/primaryWorkLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/primaryNavView"
-        >
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        android:layout_below="@id/primaryNavView"></androidx.appcompat.widget.LinearLayoutCompat>
 </RelativeLayout>

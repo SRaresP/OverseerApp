@@ -74,9 +74,6 @@ public class TrackingListFragment extends Fragment {
 		addNewTrackedUserB.setEnabled(false);
 
 		overseerApp.getExecutorService().execute(() -> {
-			CurrentUser.resetTrackedUsers();
-			CurrentUser.addTrackedUsersFromIds();
-
 			HashMap<Integer, TrackedUser> users = CurrentUser.getTrackedUsers();
 			users.forEach((userId, user) -> {
 				if (user == null) return;

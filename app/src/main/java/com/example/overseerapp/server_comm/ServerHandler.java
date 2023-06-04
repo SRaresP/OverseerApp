@@ -15,6 +15,8 @@ public class ServerHandler {
 	private static final String IP = "192.168.100.2";
 	private static final int PORT = 8000;
 
+	private static final String END = "<_-END-_>";
+
 	//server request types
 	private static final String LOGIN_OVERSEER = "LOGIN_OVERSEER";
 	private static final String REGISTER_OVERSEER = "REGISTER_OVERSEER";
@@ -42,7 +44,7 @@ public class ServerHandler {
 	public static final String REMOVED_SETTINGS = "REMOVED_SETTINGS";
 	public static final String GOT_TARGET_LOCATION_AND_INTERVAL = "GOT_TARGET_LOCATION_AND_INTERVAL";
 	public static final String GOT_GEOAREAS = "GOT_GEOAREAS";
-	public static final String ADDED_GEOAREAS = "ADDED_GEOAREA";
+	public static final String ADDED_GEOAREA = "ADDED_GEOAREA";
 	//negative
 	public static final String NOT_FOUND = "NOT_FOUND";
 	public static final String WRONG_PASSWORD = "WRONG_PASSWORD";
@@ -51,6 +53,7 @@ public class ServerHandler {
 	public static final String NOT_A_TARGET_ID = "NOT_A_TARGET_ID";
 	public static final String NOT_AN_INTERVAL = "NOT_AN_INTERVAL";
 	public static final String NOT_A_GEOAREA = "NOT_A_GEOAREA";
+	public static final String ALREADY_TRACKING = "ALREADY_TRACKING";
 	//code problem
 	public static final String UNDEFINED_CASE = "UNDEFINED_CASE";
 
@@ -64,7 +67,8 @@ public class ServerHandler {
 		StringBuilder stringBuilder = new StringBuilder()
 				.append(LOGIN_OVERSEER)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(CurrentUser.toText());
+				.append(CurrentUser.toText())
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -77,7 +81,8 @@ public class ServerHandler {
 		StringBuilder stringBuilder = new StringBuilder()
 				.append(REGISTER_OVERSEER)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(CurrentUser.toText());
+				.append(CurrentUser.toText())
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -96,7 +101,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(trackedUserId);
+				.append(trackedUserId)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -115,7 +121,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(code);
+				.append(code)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -134,7 +141,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(id);
+				.append(id)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -153,7 +161,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(targetId);
+				.append(targetId)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -174,7 +183,8 @@ public class ServerHandler {
 				.append(OverseerApp.COMM_SEPARATOR)
 				.append(targetId)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(interval);
+				.append(interval)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -193,7 +203,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(targetId);
+				.append(targetId)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -212,7 +223,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(targetId);
+				.append(targetId)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -231,7 +243,8 @@ public class ServerHandler {
 				.append(OverseerApp.USER_SEPARATOR)
 				.append(CurrentUser.password)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(targetId);
+				.append(targetId)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -252,7 +265,8 @@ public class ServerHandler {
 				.append(OverseerApp.COMM_SEPARATOR)
 				.append(targetId)
 				.append(OverseerApp.COMM_SEPARATOR)
-				.append(geoArea);
+				.append(geoArea)
+				.append(END);
 		printWriter.write(stringBuilder.toString());
 		printWriter.flush();
 		return socket;
@@ -263,15 +277,22 @@ public class ServerHandler {
 	}
 
 	public static String receive(final @NonNull Socket socket) throws IOException {
-
 		char[] response = new char[500];
+		String finalResponse = "";
 
 		InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-		bufferedReader.read(response);
+		while (true) {
+			bufferedReader.read(response);
+			finalResponse += String.valueOf(response);
+			if (finalResponse.contains(END)) {
+				break;
+			}
+		}
 		socket.close();
 
-		return String.valueOf(response);
+		finalResponse = finalResponse.trim();
+		return finalResponse.split(END)[0];
 	}
 }

@@ -1,15 +1,16 @@
 package com.example.overseerapp.server_comm;
 
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.overseerapp.OverseerApp;
-import com.example.overseerapp.R;
 import com.example.overseerapp.location.GeoArea;
 import com.example.overseerapp.server_comm.exceptions.TrackingSlotsAmountException;
 import com.example.overseerapp.storage.EncryptedStorageController;
 import com.example.overseerapp.tracking.TrackedUser;
+import com.example.overseerapp.tracking.TrackerService;
 import com.example.overseerapp.tracking.UserNotFoundException;
 
 import java.io.IOException;
@@ -120,6 +121,10 @@ public class CurrentUser {
 	}
 
 	public static void addTrackedUsersFromIds() {
+		OverseerApp overseerApp = OverseerApp.getInstance();
+		Intent intent = new Intent(overseerApp, TrackerService.class);
+		// stop the service to clear the update timers and replace them with new ones when the service starts again
+		overseerApp.stopService(intent);
 		String[] IDs = CurrentUser.trackedUserIDs.split(String.valueOf(OverseerApp.TRACKED_USER_SEPARATOR));
 		for (String id : IDs) {
 			if (id.equals("")) continue;
@@ -128,7 +133,7 @@ public class CurrentUser {
 				String[] response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
 
 				//didn't receive location history
-				if (!response[0].equals(ServerHandler.GOT_USER)) {
+				if (!response[0].contains(ServerHandler.GOT_USER)) {
 					Log.e(TAG, "Could not get location histories for id: " + id + ". Received response : " + response[0]);
 					continue;
 				}
@@ -197,7 +202,7 @@ public class CurrentUser {
 				String[] response = ServerHandler.receive(socket).split(String.valueOf(OverseerApp.COMM_SEPARATOR));
 
 				//didn't receive location history
-				if (!response[0].equals(ServerHandler.GOT_USER)) {
+				if (!response[0].contains(ServerHandler.GOT_USER)) {
 					Log.e(TAG, "Could not get location histories for id: " + id + ". Received response : " + response[0]);
 					continue;
 				}

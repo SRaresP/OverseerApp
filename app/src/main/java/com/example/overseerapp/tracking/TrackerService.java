@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
@@ -21,7 +22,7 @@ public class TrackerService extends Service {
 
 	private static final String ACTION_STOP_UPDATES = "overseerapp.intent.action.stop_updates";
 
-	HashMap<Integer, TrackedUser> targets;
+	private HashMap<Integer, TrackedUser> targets;
 
 	public TrackerService() {}
 

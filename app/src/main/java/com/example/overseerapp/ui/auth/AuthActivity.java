@@ -120,6 +120,7 @@ public class AuthActivity extends AppCompatActivity {
 						} else if (response.contains(ServerHandler.WRONG_PASSWORD)) {
 							setUpForManualLogin(alertDialog, "Entered password does not match");
 						} else {
+							Log.e(TAG, "Unexpected server reply: " + response);
 							setUpForManualLogin(alertDialog, "Server sent an unexpected reply");
 						}
 					});

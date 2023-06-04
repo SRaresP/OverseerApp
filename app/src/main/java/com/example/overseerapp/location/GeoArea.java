@@ -28,7 +28,8 @@ public class GeoArea {
 	private int targetId;
 	public int color;
 	public GeoAreaMode mode;
-	private ArrayList<GeoFence> geoFences;
+	public String triggerMessage;
+	public ArrayList<GeoFence> geoFences;
 
 	@NonNull
 	public static HashMap<Integer, GeoArea> GetGeoAreaMap(@NonNull String geoAreas)
@@ -46,12 +47,23 @@ public class GeoArea {
 		return geoMap;
 	}
 
+	public GeoArea(int overseerId, int targetId, int color, GeoAreaMode mode, String triggerMessage)
+	{
+		this.overseerId = overseerId;
+		this.targetId = targetId;
+		this.color = color;
+		this.mode = mode;
+		this.triggerMessage = triggerMessage;
+		geoFences = new ArrayList<GeoFence>(1);
+	}
+
 	public GeoArea(int overseerId, int targetId, int color, GeoAreaMode mode)
 	{
 		this.overseerId = overseerId;
 		this.targetId = targetId;
 		this.color = color;
 		this.mode = mode;
+		this.triggerMessage = "";
 		geoFences = new ArrayList<GeoFence>(1);
 	}
 
@@ -60,6 +72,8 @@ public class GeoArea {
 		this.overseerId = overseerId;
 		this.targetId = targetId;
 		this.color = color;
+		this.mode = GeoAreaMode.ALERT_WHEN_INSIDE;
+		this.triggerMessage = "";
 		geoFences = new ArrayList<GeoFence>(1);
 	}
 
@@ -68,6 +82,8 @@ public class GeoArea {
 		this.overseerId = overseerId;
 		this.targetId = targetId;
 		color = DEFAULT_COLOR;
+		this.mode = GeoAreaMode.ALERT_WHEN_INSIDE;
+		this.triggerMessage = "";
 		geoFences = new ArrayList<GeoFence>(1);
 	}
 
@@ -76,24 +92,35 @@ public class GeoArea {
 		overseerId = -1;
 		targetId = -1;
 		color = DEFAULT_COLOR;
+		this.mode = GeoAreaMode.ALERT_WHEN_INSIDE;
+		this.triggerMessage = "";
 		geoFences = new ArrayList<GeoFence>(0);
 	}
 
 	public GeoArea(String geoArea) throws FormatException, IllegalArgumentException {
+		if (!geoArea.contains(String.valueOf(AREA_FENCE_SEPARATOR))) throw new FormatException("GeoArea is not parsable. Passed GeoArea string: " + geoArea);
 		String[] input = geoArea.split(String.valueOf(AREA_FENCE_SEPARATOR));
-		if (input.length < 2) throw new FormatException("GeoArea is not parsable. Passed GeoArea string: " + geoArea);
 		String[] areaDetails = input[0].split(String.valueOf(AREA_DETAILS_SEPARATOR));
-		if (areaDetails.length < 5) throw new FormatException("GeoArea is not parsable. Passed GeoArea string: " + geoArea);
-		String[] geoFences = input[1].split(String.valueOf(FENCES_SEPARATOR));
+		if (areaDetails.length < 6) throw new FormatException("GeoArea is not parsable. Passed GeoArea string: " + geoArea);
+		String[] geoFences = new String[0];
+		if (input.length > 1) {
+			geoFences = input[1].split(String.valueOf(FENCES_SEPARATOR));
+		}
 		id = Integer.parseInt(areaDetails[0]);
 		overseerId = Integer.parseInt(areaDetails[1]);
 		targetId = Integer.parseInt(areaDetails[2]);
 		color = Integer.parseInt(areaDetails[3]);
 		mode = GeoAreaMode.valueOf(areaDetails[4]);
+		triggerMessage = areaDetails[5];
 		this.geoFences = new ArrayList<GeoFence>(geoFences.length);
 		for (String geofence : geoFences)
 		{
-			this.geoFences.add(new GeoFence(geofence));
+			try {
+				this.geoFences.add(new GeoFence(geofence));
+			}
+			catch (Exception e) {
+				Log.e(TAG, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -133,6 +160,8 @@ public class GeoArea {
 				color +
 				AREA_DETAILS_SEPARATOR +
 				mode +
+				AREA_DETAILS_SEPARATOR +
+				triggerMessage +
 				AREA_FENCE_SEPARATOR);
 		for (GeoFence geoFence : geoFences)
 		{
