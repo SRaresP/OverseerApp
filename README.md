@@ -1,5 +1,5 @@
 # OverseerApp
-Part of the Geofencing package. This app is used by the tracker.
+Part of the Geofencing package. This app is used by the tracker. App is now usable.
 
 ## Todo
 
