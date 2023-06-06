@@ -40,7 +40,9 @@ public class OverseerApp extends Application {
 	// \/ used to separate user info like email, name, password etc \/
 	public static final char USER_SEPARATOR = '√';
 
-	public static final String STATUS_NOTIFICATION_CHANNEL = "status_notification_channel";
+	public static final String STATUS_NOTIFICATION_CHANNEL = "Status";
+	public static final String ALERTS_NOTIFICATION_CHANNEL = "Geofencing alerts";
+	public static final String STATUS_GROUP = "STATUS_GROUP";
 
 	public static final int STATUS_NOTIFICATION_ID = 1;
 
@@ -50,17 +52,25 @@ public class OverseerApp extends Application {
 	private final Handler mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper());
 
 	private NotificationChannel statusNotificationChannel;
+	private NotificationChannel alertsNotificationChannel;
 
 	public void onCreate() {
 		super.onCreate();
 		instance = this;
 
+		NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
 		statusNotificationChannel = new NotificationChannel(
 				STATUS_NOTIFICATION_CHANNEL,
 				"Status notification",
 				NotificationManager.IMPORTANCE_NONE);
-		NotificationManager notificationManager = getSystemService(NotificationManager.class);
 		notificationManager.createNotificationChannel(statusNotificationChannel);
+
+		alertsNotificationChannel = new NotificationChannel(
+				ALERTS_NOTIFICATION_CHANNEL,
+				"Alert notification",
+				NotificationManager.IMPORTANCE_HIGH);
+		notificationManager.createNotificationChannel(alertsNotificationChannel);
 
 		CurrentUser.resetTrackedUsers();
 		CurrentUser.addTrackedUsersFromIds();
@@ -79,4 +89,6 @@ public class OverseerApp extends Application {
 	}
 
 	public NotificationChannel getStatusNotificationChannel() { return statusNotificationChannel; }
+
+	public NotificationChannel getAlertsNotificationChannel() { return alertsNotificationChannel; }
 }

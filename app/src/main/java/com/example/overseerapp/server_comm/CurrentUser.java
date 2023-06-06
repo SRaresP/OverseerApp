@@ -102,11 +102,19 @@ public class CurrentUser {
 	}
 
 	public static void removeTrackedUserId(String id) {
+		OverseerApp overseerApp = OverseerApp.getInstance();
+		Intent intent = new Intent(overseerApp, TrackerService.class);
+		// stop the service to clear the update timers and replace them with new ones when the service starts again
+		overseerApp.stopService(intent);
 		trackedUserIDs = trackedUserIDs.replace(id + OverseerApp.TRACKED_USER_SEPARATOR, "");
 		currentNrOfTrackedUserIds = CurrentUser.trackedUserIDs.chars().filter((character) -> character == OverseerApp.TRACKED_USER_SEPARATOR).count();
 	}
 
 	public static void removeTrackedUserId(int id) {
+		OverseerApp overseerApp = OverseerApp.getInstance();
+		Intent intent = new Intent(overseerApp, TrackerService.class);
+		// stop the service to clear the update timers and replace them with new ones when the service starts again
+		overseerApp.stopService(intent);
 		trackedUserIDs = trackedUserIDs.replace("" + id + OverseerApp.TRACKED_USER_SEPARATOR, "");
 		currentNrOfTrackedUserIds = CurrentUser.trackedUserIDs.chars().filter((character) -> character == OverseerApp.TRACKED_USER_SEPARATOR).count();
 	}

@@ -20,6 +20,7 @@ import com.example.overseerapp.OverseerApp;
 import com.example.overseerapp.R;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
+import com.example.overseerapp.tracking.TrackerService;
 
 import java.net.Socket;
 
@@ -107,10 +108,16 @@ public class UserEntryLayout extends LinearLayoutCompat {
 
 								if (response[0].trim().equals(ServerHandler.REMOVED_TARGET)) {
 									CurrentUser.removeTrackedUserId(userId);
+									CurrentUser.resetTrackedUsers();
+									CurrentUser.addTrackedUsersFromIds();
 									// Call onResume to refresh list of tracked users
 									if (fragmentToRefresh != null) {
 										overseerApp.getMainThreadHandler().post(fragmentToRefresh::onResume);
 									}
+									Intent intent = new Intent(overseerApp, TrackerService.class);
+									overseerApp.stopService(intent);
+									intent = new Intent(overseerApp, TrackerService.class);
+									overseerApp.startForegroundService(intent);
 								}
 								else {
 									overseerApp.getMainThreadHandler().post(() -> {

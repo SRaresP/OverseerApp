@@ -56,6 +56,7 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 	private ActivityUsersMapBinding binding;
 
 	private TrackedUser user;
+	private int userId;
 	private Marker marker;
 	private final Observer<String> locationAnnouncer = (history) -> {
 		String[] lastLocation = LocationHandler.getLastLocation(history)
@@ -78,13 +79,9 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 
 	private void initUser() {
 		Intent intent = getIntent();
-		int userId = intent.getIntExtra("userId", -1);
+		userId = intent.getIntExtra("userId", -1);
 		if (userId == -1) {
 			Log.e(TAG, "User not passed to UsersMapActivity.");
-		}
-		user = CurrentUser.getTrackedUsers().get(userId);
-		if (user == null) {
-			Log.e(TAG, "No user found by id in UsersMapActivity.");
 		}
 	}
 
@@ -191,8 +188,8 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		binding = ActivityUsersMapBinding.inflate(getLayoutInflater());
 		setContentView(binding.getRoot());
 
-		initViews();
 		initUser();
+		initViews();
 	}
 
 	@Override
@@ -203,6 +200,10 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
 				.findFragmentById(R.id.map);
 		mapFragment.getMapAsync(this);
+		user = CurrentUser.getTrackedUsers().get(userId);
+		if (user == null) {
+			Log.e(TAG, "No user found by id in UsersMapActivity.");
+		}
 	}
 
 	private int getCircleRadiusBasedOnZoom(float zoom) {
@@ -394,8 +395,11 @@ public class UsersMapActivity extends FragmentActivity implements OnMapReadyCall
 						if (response[0].equals(ServerHandler.ADDED_GEOAREA)) {
 							overseerApp.getMainThreadHandler().post(() -> {
 								savingDialog.dismiss();
+								saveDialog.dismiss();
 								Toast.makeText(overseerApp, "Saving successful!", Toast.LENGTH_SHORT).show();
 							});
+							user.geoAreas.clear();
+							user.geoAreas.put(geoArea.getId(), geoArea);
 						}
 						else {
 							overseerApp.getMainThreadHandler().post(() -> {

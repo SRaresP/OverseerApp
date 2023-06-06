@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.example.overseerapp.R;
 import com.example.overseerapp.server_comm.CurrentUser;
 import com.example.overseerapp.server_comm.ServerHandler;
 import com.example.overseerapp.server_comm.exceptions.TrackingSlotsAmountException;
+import com.example.overseerapp.tracking.TrackerService;
 import com.example.overseerapp.ui.TrackingListFragment;
 
 import java.io.IOException;
@@ -119,6 +121,10 @@ public class CodeDialogFragment extends DialogFragment {
 					CurrentUser.addTrackedUsersFromIds();
 					overseerApp.getMainThreadHandler().post(() -> {
 						trackingListFragment.onResume();
+						Intent intent = new Intent(overseerApp, TrackerService.class);
+						overseerApp.stopService(intent);
+						intent = new Intent(overseerApp, TrackerService.class);
+						overseerApp.startForegroundService(intent);
 					});
 				}
 				catch (IOException e) {

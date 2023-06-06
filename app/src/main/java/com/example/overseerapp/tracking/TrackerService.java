@@ -42,6 +42,7 @@ public class TrackerService extends Service {
 
 		Intent toAppIntent = new Intent(this, PrimaryActivity.class);
 		toAppIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+		// request code can be static because intent data doesn't change (as of now)
 		PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, 0, toAppIntent, PendingIntent.FLAG_IMMUTABLE);
 
 		Intent stopTrackingIntent = new Intent(this, TrackerService.class)
@@ -62,7 +63,8 @@ public class TrackerService extends Service {
 				.setContentIntent(notificationPendingIntent)
 				.setOngoing(true)
 				.setCategory(Notification.CATEGORY_STATUS)
-				.addAction(R.drawable.ic_baseline_stop_24, "Stop", pStopTrackingIntent);
+				.addAction(R.drawable.ic_baseline_stop_24, "Stop", pStopTrackingIntent)
+				.setGroup(OverseerApp.STATUS_GROUP);
 		Notification statusNotification = builder.build();
 
 		startForeground(OverseerApp.STATUS_NOTIFICATION_ID, statusNotification);
