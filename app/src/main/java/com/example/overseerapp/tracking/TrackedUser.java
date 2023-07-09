@@ -33,7 +33,7 @@ import java.util.TimerTask;
 public class TrackedUser {
 	private static final String TAG = "TrackedUser";
 	// errors defined in ms
-	private static final long MINIMUM_ERROR = 250;
+	private static final long MINIMUM_ERROR = 500;
 	private static final long MAXIMUM_ERROR = 30000;
 
 	private final int id;
@@ -188,9 +188,6 @@ public class TrackedUser {
 		@Override
 		public void run() {
 			OverseerApp overseerApp = OverseerApp.getInstance();
-//			overseerApp.getMainThreadHandler().post(() -> {
-//				Toast.makeText(overseerApp, "Updating location for " + user.name + "#" + user.id, Toast.LENGTH_SHORT).show();
-//			});
 			try {
 				Socket socket = ServerHandler.getTargetLocationAndInterval(id);
 				String[] response = ServerHandler.receive(socket).trim().split(String.valueOf(OverseerApp.COMM_SEPARATOR));
